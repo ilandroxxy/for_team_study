@@ -25,6 +25,13 @@ async def help_command(message: types.Message):
     await message.answer(text=HELP_TEXT, parse_mode="HTML")
 
 
+@dp.message_handler(commands=['location'])
+async def send_point(message: types.Message):
+    await bot.send_location(chat_id=message.chat.id,
+                            latitude=54.858393,
+                            longitude=83.110603)
+
+
 @dp.message_handler()
 async def echo_emoji(message: types.Message):
     await message.reply(text=f"В твоем сообщение {message.text.count('✅')} символов ✅.")
@@ -36,4 +43,4 @@ async def send_sticker_id(message: types.Message):
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, on_startup=on_startup)
+    executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
