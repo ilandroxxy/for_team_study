@@ -30,5 +30,10 @@ async def echo_emoji(message: types.Message):
     await message.reply(text=f"В твоем сообщение {message.text.count('✅')} символов ✅.")
 
 
+@dp.message_handler(content_types=['sticker'])
+async def send_sticker_id(message: types.Message):
+     await message.answer(message.sticker.file_id)
+
+
 if __name__ == '__main__':
     executor.start_polling(dp, on_startup=on_startup)
