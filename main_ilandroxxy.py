@@ -1,9 +1,29 @@
 from aiogram import Bot, Dispatcher, executor, types
+import os
+from dotenv import load_dotenv
 
-TOKEN_API = "5734914555:AAETPQsfcDp2H7XJVJfdqpnvpVeMrLLmNso"
+HELP_TEXT = """
+/start - перезапустить бот
+/help - список команд в боте
+"""
 
-bot = Bot(TOKEN_API)
+load_dotenv()
+token = os.getenv('TOKEN_API')
+
+bot = Bot(token)
 dp = Dispatcher(bot)
+
+
+@dp.message_handler(commands=['start'])
+async def help_command(message: types.Message):
+    await message.answer(text="Hello, World!")
+    await message.delete()
+
+
+@dp.message_handler(commands=['help'])
+async def help_command(message: types.Message):
+    await message.reply(text=HELP_TEXT)
+
 
 @dp.message_handler()
 async def echo(message: types.Message):
