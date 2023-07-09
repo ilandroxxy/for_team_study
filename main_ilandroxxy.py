@@ -2,11 +2,13 @@
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters import Text
 
-from inline_handlers import links_buttons, contact_buttons
+from inline_handlers import photo_buttons
 from keyboard_handlers import kb, kb_send_photo
+from texts_for_users import for_picture
 
 import os
 import random
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,50 +16,38 @@ token = os.getenv('TOKEN_API')
 
 bot = Bot(token)
 dp = Dispatcher(bot)
-# endregion import-ы
 
 
 async def on_startup(_):
     print('Я был запущен!')
+# endregion import-ы
 
+dict_voted_users = {}
 
 @dp.message_handler(commands=["start"])
 async def start_command(message: types.Message):
-    await message.answer(text=f"Привет, {message.from_user.first_name}", reply_markup=kb)
+    await bot.send_photo(message.chat.id,
+                         photo="https://ru.freepik.com/premium-photo/portrait-of-male-programmer-in-office_13708354.htm",
+                         caption=for_picture.text_for_test_picture,
+                         reply_markup=photo_buttons)
 
-
-@dp.message_handler(commands=["links"])
-async def links_command(message: types.Message):
-    await message.answer(text="Давайте решим рандомную задачку", reply_markup=links_buttons)
-
-@dp.message_handler(commands=["Venya"])
-async def Venya_coommand(message: types.Message):
-    await message.answer(text="<b>Веня</b>, мы тебя услышали", parse_mode='HTML')
-    await bot.send_sticker(message.chat.id, sticker="CAACAgIAAxkBAAEJhmBknVKv0Thaglc40AabNwk4rLRQ9gAC_wEAApfYKgz93kVX-B64Pi8E")
-    await message.delete()
-
-
-
-@dp.message_handler(Text(equals='Рандомная картинка'))
-async def open_keyboard_photo(message: types.Message):
-    await message.answer(text="Чтобы отправить рандомную фотографию нажми на кнопку Рандом",
-                         reply_markup=kb_send_photo)
-
-
-@dp.message_handler()
-async def echo_answer(message: types.Message):
-    if message.text == 'Контакты':
-        await bot.send_message(message.chat.id, text="А вот нажми на кнопочку", reply_markup=contact_buttons)
-    elif message.text == 'Главное меню':
-        await message.answer(text='Открыл главное меню', reply_markup=kb_send_photo)
-        await message.delete()
 
 
 @dp.callback_query_handler()
-async def test_callback(callback: types.CallbackQuery):
-    if callback.data == "lessons":
-        await callback.answer(text="Вот мои контакты")
-    await callback.answer(text="Еще что-то")
+async def handlers_for_callbacks(call: types.CallbackQuery):
+    if call.data == "close_photo_buttons":
+        await call.message.delete()
+    if call.message.chat.id not in dict_voted_users:
+        if call.data == "like_photo_buttons":
+            await call.answer(show_alert=False, text=f"{str(call.data)} понравилась картинка")
+            dict_voted_users[call.message.chat.id] = "👍"
+        elif call.data == "dislike_photo_buttons":
+            await call.answer(show_alert=False, text=f"{str(call.data)} не понравилась картинка")
+            dict_voted_users[call.message.chat.id] = "👎"
+    else:
+        await call.answer(text=f"Ты уже голосовал {dict_voted_users[call.message.chat.id]}",
+                          show_alert=True)
+
 
 
 if __name__ == '__main__':
