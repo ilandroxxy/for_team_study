@@ -7,6 +7,7 @@ __pycache__/
 *.so
 .idea
 .DS_Store
+test_ilandroxxy.py
 
 # Distribution / packaging
 .Python

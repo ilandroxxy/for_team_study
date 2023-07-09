@@ -2,7 +2,7 @@
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters import Text
 
-from inline_handlers import photo_buttons
+from inline_handlers import photo_buttons, get_inline_keyboard
 from keyboard_handlers import kb, kb_send_photo
 from texts_for_users import for_picture
 
@@ -22,31 +22,34 @@ async def on_startup(_):
     print('Я был запущен!')
 # endregion import-ы
 
-dict_voted_users = {}
+number = {}
+
+
+
 
 @dp.message_handler(commands=["start"])
 async def start_command(message: types.Message):
-    await bot.send_photo(message.chat.id,
-                         photo="https://ru.freepik.com/premium-photo/portrait-of-male-programmer-in-office_13708354.htm",
-                         caption=for_picture.text_for_test_picture,
-                         reply_markup=photo_buttons)
+    number[message.chat.id] = 0
+    await message.answer(f'The current number is: {number[message.chat.id]}',
+                         reply_markup=get_inline_keyboard())
 
 
 
-@dp.callback_query_handler()
+@dp.callback_query_handler(lambda callback_query: callback_query.data.startswith('btn'))
 async def handlers_for_callbacks(call: types.CallbackQuery):
-    if call.data == "close_photo_buttons":
-        await call.message.delete()
-    if call.message.chat.id not in dict_voted_users:
-        if call.data == "like_photo_buttons":
-            await call.answer(show_alert=False, text=f"{str(call.data)} понравилась картинка")
-            dict_voted_users[call.message.chat.id] = "👍"
-        elif call.data == "dislike_photo_buttons":
-            await call.answer(show_alert=False, text=f"{str(call.data)} не понравилась картинка")
-            dict_voted_users[call.message.chat.id] = "👎"
-    else:
-        await call.answer(text=f"Ты уже голосовал {dict_voted_users[call.message.chat.id]}",
-                          show_alert=True)
+    global number
+    if call.data == "btn_increase":
+        number[call.message.chat.id] += 1
+        await call.message.edit_text(f'The current number is: {number[call.message.chat.id]}',
+                                     reply_markup=get_inline_keyboard())
+    elif call.data == "btn_decrease":
+        number[call.message.chat.id] -= 1
+        await call.message.edit_text(f'The current number is: {number[call.message.chat.id]}',
+                                     reply_markup=get_inline_keyboard())
+    elif call.data == 'btn_random':
+        number[call.message.chat.id] = random.randint(-1000, 1000)
+        await call.message.edit_text(f'The current number is: {number[call.message.chat.id]}',
+                                     reply_markup=get_inline_keyboard())
 
 
 
