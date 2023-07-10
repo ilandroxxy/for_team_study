@@ -1,5 +1,6 @@
 # region import-ы
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.utils.exceptions import BotBlocked
 from aiogram.dispatcher.filters import Text
 
 from inline_handlers import photo_buttons, get_inline_keyboard
@@ -23,8 +24,6 @@ async def on_startup(_):
 # endregion import-ы
 
 number = {}
-
-
 
 
 @dp.message_handler(commands=["start"])
@@ -51,6 +50,10 @@ async def handlers_for_callbacks(call: types.CallbackQuery):
         await call.message.edit_text(f'The current number is: {number[call.message.chat.id]}',
                                      reply_markup=get_inline_keyboard())
 
+@dp.errors_handler(exception=BotBlocked)
+async def error_bot_was_blocked(update: types.Update, exception: BotBlocked) -> bool:
+    print(f"Кто-то заблокировал бота")
+    return True
 
 
 if __name__ == '__main__':
