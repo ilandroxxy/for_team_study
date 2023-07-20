@@ -3,9 +3,11 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import BotBlocked
 from aiogram.dispatcher.filters import Text
 
-from inline_handlers import photo_buttons, get_inline_keyboard
-from keyboard_handlers import kb, kb_send_photo
-from texts_for_users import for_picture
+import keyboard_handlers
+from inline_handlers import *
+from keyboard_handlers import *
+from texts_for_users import *
+from sqlite import *
 
 import os
 import random
@@ -21,34 +23,40 @@ dp = Dispatcher(bot)
 
 async def on_startup(_):
     print('Я был запущен!')
+    await db_start()
 # endregion import-ы
-
-number = {}
 
 
 @dp.message_handler(commands=["start"])
 async def start_command(message: types.Message):
-    number[message.chat.id] = 0
-    await message.answer(f'The current number is: {number[message.chat.id]}',
-                         reply_markup=get_inline_keyboard())
+    await message.answer(text=ForCommands.push_start_command(message),
+                         reply_markup=keyboard_handlers.get_keyboard())
+    await add_user(user_id=message.chat.id,
+                   user_username=message.from_user.username,
+                   user_first_name=message.from_user.first_name,
+                   user_last_name=message.from_user.last_name)
 
+
+@dp.message_handler(commands=["homework"])
+async def homework_command(message: types.Message):
+    await message.answer(text=ForCommands.push_homework_command(message),
+                         parse_mode="HTML",
+                         reply_markup=get_homework())
 
 
 @dp.callback_query_handler(lambda callback_query: callback_query.data.startswith('btn'))
 async def handlers_for_callbacks(call: types.CallbackQuery):
-    global number
-    if call.data == "btn_increase":
-        number[call.message.chat.id] += 1
-        await call.message.edit_text(f'The current number is: {number[call.message.chat.id]}',
-                                     reply_markup=get_inline_keyboard())
-    elif call.data == "btn_decrease":
-        number[call.message.chat.id] -= 1
-        await call.message.edit_text(f'The current number is: {number[call.message.chat.id]}',
-                                     reply_markup=get_inline_keyboard())
-    elif call.data == 'btn_random':
-        number[call.message.chat.id] = random.randint(-1000, 1000)
-        await call.message.edit_text(f'The current number is: {number[call.message.chat.id]}',
-                                     reply_markup=get_inline_keyboard())
+    if call.data == "example":
+        pass
+
+
+@dp.message_handler()
+async def message_handlers(message: types.Message):
+    message.text = message.text.lower().strip()
+    if message.text == 'random emoji':
+        await message.answer(ForMessageHandlers.enter_message_random_emoji(message))
+
+
 
 @dp.errors_handler(exception=BotBlocked)
 async def error_bot_was_blocked(update: types.Update, exception: BotBlocked) -> bool:
