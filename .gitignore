@@ -8,6 +8,7 @@ __pycache__/
 .idea
 .DS_Store
 test_ilandroxxy.py
+*.db
 
 # Distribution / packaging
 .Python
