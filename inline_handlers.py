@@ -1,5 +1,9 @@
-def main():
-    pass
+import random
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+import random
 
-if __name__ == '__main__':
-    main()
+
+
+
+
+
