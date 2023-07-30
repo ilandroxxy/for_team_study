@@ -2,6 +2,19 @@ import random
 emojis = "😅🙏😂😭😄😢😍❤️😁👍👎☺️😱😌🥳😎👾🤖💙💚💫💥💣💯💭👈👉👇"
 
 
+class ForUsers():
+
+    def __init__(self, message):
+        self.message = message
+
+    @staticmethod
+    def push_command_start(self):
+        hello = ('Привет', 'Доброго времени суток', 'Приветствую Вас')
+        text = f'{random.choice(hello)}, {self.from_user.first_name}!'
+        return text
+
+
+'''
 class ForCommands():
     def __init__(self, message):
         self.message = message
@@ -26,3 +39,4 @@ class ForMessageHandlers():
     def enter_message_random_emoji(self):
         text_if_enter_random_emoji = f"Получите: {random.choice(emojis)}"
         return text_if_enter_random_emoji
+'''

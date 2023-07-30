@@ -6,18 +6,23 @@ from aiogram.dispatcher.filters import Text
 import keyboard_handlers
 from inline_handlers import *
 from keyboard_handlers import *
+from default_commands import *
 from texts_for_users import *
 from sqlite import *
 
+import asyncio
 import os
 import random
 import time
 from dotenv import load_dotenv
 
+pm: str = 'HTML'
+
 load_dotenv()
 token = os.getenv('TOKEN_API')
+admin = int(os.getenv('ADMIN'))
 
-bot = Bot(token)
+bot = Bot(token, parse_mode=pm)
 dp = Dispatcher(bot)
 
 
@@ -27,6 +32,8 @@ async def on_startup(_):
 # endregion import-ы
 
 
+
+'''
 @dp.message_handler(commands=["start"])
 async def start_command(message: types.Message):
     await message.answer(text=ForCommands.push_start_command(message),
@@ -48,23 +55,28 @@ async def homework_command(message: types.Message):
 async def handlers_for_callbacks(call: types.CallbackQuery):
     if call.data == "example":
         pass
+'''
 
 
-@dp.message_handler()
-async def message_handlers(message: types.Message):
-    message.text = message.text.lower().strip()
-    if message.text == 'random emoji':
-        await message.answer(ForMessageHandlers.enter_message_random_emoji(message))
+@dp.message_handler(commands=['start'])
+async def command_start(message: types.Message):
+    if message.chat.id == admin:
+        await message.answer(text=ForUsers.push_command_start(message))
+    else:
+        hello = ('Привет', 'Доброго времени суток', 'Приветствую Вас')
+        await message.answer(text=ForUsers.push_command_start(message))
+        await bot.send_message(chat_id=admin,
+                               text=f'#newuser: @{message.from_user.username}\n'
+                                    f'ID: {message.chat.id}\n'
+                                    f'[Написать сообщение](tg://user?id={message.chat.id})')
 
 
+async def main():
+    await set_bot_commands(bot)
 
-@dp.errors_handler(exception=BotBlocked)
-async def error_bot_was_blocked(update: types.Update, exception: BotBlocked) -> bool:
-    print(f"Кто-то заблокировал бота")
-    return True
+    await dp.start_polling(
+        bot)
 
 
 if __name__ == '__main__':
-    executor.start_polling(dispatcher=dp,
-                           on_startup=on_startup,
-                           skip_updates=True)
+    asyncio.run(main())
