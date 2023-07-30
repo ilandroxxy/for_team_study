@@ -14,7 +14,7 @@ def my_contacts_buttons() -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="Мой аккаунт", url='https://t.me/honicraft'),
-            InlineKeyboardButton(text="Мой авито", url='https://www.avito.ru/moskva/predlozheniya_uslug/repetitor_k_egeoge_po_informatike_3315329905')
+            InlineKeyboardButton(text="Мой авито", url='https://clck.ru/359D5t')
         ]
     ])
     return ikb
