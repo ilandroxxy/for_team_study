@@ -18,3 +18,14 @@ def my_contacts_buttons() -> InlineKeyboardMarkup:
         ]
     ])
     return ikb
+
+
+def homework_buttons() -> InlineKeyboardMarkup:
+    ikb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Задачи ЕГЭ", callback_data='EGE_zadachi'),
+            InlineKeyboardButton(text="Теория Питона", callback_data='Python_Theory'),
+            InlineKeyboardButton(text="Сдать домашку", callback_data='get_homework')
+        ]
+    ])
+    return ikb

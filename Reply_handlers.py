@@ -8,3 +8,9 @@ def start_buttons() -> ReplyKeyboardMarkup:
         KeyboardButton(text='Записаться на урок')
     )
     return rkm
+
+
+def homework_cancel_button() -> ReplyKeyboardMarkup:
+    rkm = ReplyKeyboardMarkup(resize_keyboard=True)
+    rkm.add(KeyboardButton(text='Отмена'))
+    return rkm

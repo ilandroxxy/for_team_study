@@ -57,12 +57,27 @@ async def messages_handler(message: types.Message):
     elif message.text == 'записаться на урок':
         await message.answer(text=sign_lesson_text(),
                              reply_markup=write_to_me())
+    elif message.text == '/homework':
+        await message.answer(text='Что именно нужно?',
+                             reply_markup=homework_buttons())
+
+
+
+
 
 
 @dp.callback_query_handler()
 async def callbacks_handler(call: types.CallbackQuery):
-    if call.data == "11":
-        await call.message.answer(random.choice(emojis))
+    if call.data == "get_homework":
+        await call.message.answer('Отправь свой код', reply_markup=homework_cancel_button())
+
+
+
+
+
+@dp.message_handler(content_types=['sticker'])
+async def get_sticker_id(message: types.Message):
+    await message.answer(text=message.sticker.file_id)
 
 
 async def main():
