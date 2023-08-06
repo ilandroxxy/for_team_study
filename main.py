@@ -16,6 +16,7 @@ load_dotenv()
 token = os.getenv('API_TOKEN')
 admin = int(os.getenv('ADMIN'))
 group = int(os.getenv('GROUP'))
+USER = {}
 
 bot = Bot(token)
 dp = Dispatcher(bot)
@@ -60,8 +61,19 @@ async def messages_handler(message: types.Message):
     elif message.text == '/homework':
         await message.answer(text='Что именно нужно?',
                              reply_markup=homework_buttons())
-
-
+    elif message.text == 'отмена':
+        await message.answer(text='Возвращаю в начало :)', reply_markup=start_buttons())
+    else:
+        if USER[message.from_user.id] == 'get_hw':
+            USER[message.from_user.id] = 0
+            file_name = f'{message.from_user.first_name}.txt'
+            with open(file_name, 'w') as f:
+                f.write(message.text)
+            with open(file_name, 'rb') as document:
+                await bot.send_document(chat_id=group, document=document)
+            await message.answer(text='Код отправлен!', reply_markup=start_buttons())
+        else:
+            await message.answer(text='я ниче не понял')
 
 
 
@@ -70,8 +82,7 @@ async def messages_handler(message: types.Message):
 async def callbacks_handler(call: types.CallbackQuery):
     if call.data == "get_homework":
         await call.message.answer('Отправь свой код', reply_markup=homework_cancel_button())
-
-
+        USER[call.from_user.id] = 'get_hw'
 
 
 
