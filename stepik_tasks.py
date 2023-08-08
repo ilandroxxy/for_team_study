@@ -138,3 +138,26 @@ while not(0 <= n <= 9):
     n = summ
 print(n)
 '''
+
+
+# Merge lists 2
+# link: https://stepik.org/lesson/331754/step/13?unit=315133
+'''
+def quick_merge(list1, list2):
+    result = list1 + list2
+
+    return sorted(result)
+
+n = int(input())
+res = []
+
+for i in range(n):
+    M = [int(i) for i in input().split()]
+    res = quick_merge(M, res)
+print(*res)
+'''
+
+
+
+
+

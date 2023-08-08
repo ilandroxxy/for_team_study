@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 pm: str = 'HTML'
 
 load_dotenv()
-token = os.getenv('TOKEN_API')
+token = os.getenv('API_TOKEN')
 admin = int(os.getenv('ADMIN'))
 
 bot = Bot(token, parse_mode=pm)
