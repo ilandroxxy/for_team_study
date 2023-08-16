@@ -7,6 +7,8 @@ async def set_bot_commands(bot: Bot):
         BotCommand(command="start", description="Перезапуск бота, на стартовую позицию 🏁"),
         BotCommand(command="help", description="Техподдержка, 123 напишите нам ⚙️"),
         BotCommand(command="getmyid", description="Бот покажет ваш id пользователя Telegram 👾"),
+        BotCommand(command="contact", description="Мои контакты!"),
+        BotCommand(command='stickers', description="Получите стикеры!")
     ]
 
     await bot.set_my_commands(
